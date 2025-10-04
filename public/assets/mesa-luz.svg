@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="480" viewBox="0 0 600 480">
+  <defs>
+    <linearGradient id="grad" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#754c29" stop-opacity="0.92" />
+      <stop offset="1" stop-color="#754c29" stop-opacity="0.65" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="480" rx="32" fill="url(#grad)" />
+  <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="'Segoe UI', 'Helvetica', 'Arial', sans-serif" font-size="72" fill="rgba(255,255,255,0.95)" letter-spacing="4">Mesa Luz</text>
+  <text x="50%" y="78%" dominant-baseline="middle" text-anchor="middle" font-family="'Segoe UI', 'Helvetica', 'Arial', sans-serif" font-size="24" fill="rgba(255,255,255,0.75)">Foto pendiente</text>
+</svg>

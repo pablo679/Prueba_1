@@ -1,0 +1,140 @@
+const { useState, useEffect } = React;
+
+function Navbar({ cartCount }) {
+  return (
+    <header className="navbar">
+      <h1>Mueblería Hermanos Jota</h1>
+      <div className="cart">Carrito: {cartCount}</div>
+    </header>
+  );
+}
+
+function ProductCard({ product, onSelect }) {
+  return (
+    <div className="card" onClick={() => onSelect(product)}>
+      <h3>{product.nombre}</h3>
+      <p>{product.descripcion}</p>
+      <div className="price">${product.precio}</div>
+    </div>
+  );
+}
+
+function ProductDetail({ product, onAdd }) {
+  if (!product) return null;
+  return (
+    <div className="detail">
+      <h2>{product.nombre}</h2>
+      <p>{product.descripcion}</p>
+      <p>Precio: ${product.precio}</p>
+      <p>Stock: {product.stock}</p>
+      <button onClick={() => onAdd(product)}>Añadir al Carrito</button>
+    </div>
+  );
+}
+
+function ContactForm() {
+  const [form, setForm] = useState({ nombre: '', email: '', mensaje: '' });
+  const [success, setSuccess] = useState(null);
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    console.log('Contacto enviado:', form);
+    setSuccess('Mensaje enviado correctamente');
+    setForm({ nombre: '', email: '', mensaje: '' });
+  }
+
+  return (
+    <section className="contact">
+      <h2>Contacto</h2>
+      <form onSubmit={handleSubmit}>
+        <label>Nombre<br/>
+          <input name="nombre" value={form.nombre} onChange={handleChange} required />
+        </label>
+        <label>Email<br/>
+          <input name="email" type="email" value={form.email} onChange={handleChange} required />
+        </label>
+        <label>Mensaje<br/>
+          <textarea name="mensaje" value={form.mensaje} onChange={handleChange} required />
+        </label>
+        <button type="submit">Enviar</button>
+      </form>
+      {success && <div className="success">{success}</div>}
+    </section>
+  );
+}
+
+const API_BASE = window.location.port === '5500' ? 'http://localhost:3000' : window.location.origin;
+
+function App() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [selected, setSelected] = useState(null);
+  const [cart, setCart] = useState([]);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch(`${API_BASE}/api/productos`)
+      .then(r => {
+        if (!r.ok) throw new Error('Error al cargar productos');
+        return r.json();
+      })
+      .then(data => setProducts(data))
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  function handleSelect(p) {
+    setSelected(p);
+  }
+
+  function handleAdd(product) {
+    setCart(prev => [...prev, product]);
+  }
+
+  return (
+    <div>
+      <Navbar cartCount={cart.length} />
+      <main className="container">
+        <section className="catalog">
+          <h2>Catálogo</h2>
+          {loading && <p>Cargando...</p>}
+          {error && <p className="error">{error}</p>}
+          {!loading && !error && (
+            <div className="grid">
+              {products.map(p => (
+                <ProductCard key={p.id} product={p} onSelect={handleSelect} />
+              ))}
+            </div>
+          )}
+        </section>
+
+        <aside className="sidebar">
+          {selected ? (
+            <ProductDetail product={selected} onAdd={handleAdd} />
+          ) : (
+            <div><h3>Seleccione un producto</h3></div>
+          )}
+
+          <div className="cart-list">
+            <h3>Carrito ({cart.length})</h3>
+            <ul>
+              {cart.map((item, idx) => (
+                <li key={idx}>{item.nombre} - ${item.precio}</li>
+              ))}
+            </ul>
+          </div>
+
+          <ContactForm />
+        </aside>
+      </main>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
