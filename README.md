@@ -1,4 +1,5 @@
 # Prueba_1 - Backend + Frontend
+# Numero de grupo 9
 
 Proyecto de ejemplo que contiene un backend en Node/Express y un frontend SPA simple usando React por CDN.
 
